@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Produto
 
 def index(request):
     context = {
@@ -7,7 +8,8 @@ def index(request):
     return render(request, 'index.html', context)
 
 def produto(request):
+    produtos = Produto.objects.all()
     context = {
-        'produto': 'abacaxi',
+        'produtos' : produtos,
     }
     return render(request, 'produtos.html', context)
