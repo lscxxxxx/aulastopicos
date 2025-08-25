@@ -1,3 +1,4 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from .models import Produto
 
@@ -13,3 +14,6 @@ def produto(request):
         'produtos' : produtos,
     }
     return render(request, 'produtos.html', context)
+
+def cad_produto(request):
+    return HttpResponse("tela de cadastro de produtos")
