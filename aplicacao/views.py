@@ -1,5 +1,7 @@
-from django.http.response import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http.response import HttpResponse
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.models import User
 from .models import Produto
 
 def index(request):
@@ -53,3 +55,16 @@ def apagar_produto(request, id):
     prod = get_object_or_404(Produto, id=id)
     prod.delete()
     return redirect('url_produto')
+
+def entrar(request):
+    if request.method == "GET":
+        return render (request, "entrar.html")
+    else:
+        username = request.POST.get('nome')
+        password = request.POST.get('senha')
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect('url_produto')
+        else:
+            return HttpResponse("PANE NO SISTEMA ALGUÉM ME DESCONFIGUROU")
