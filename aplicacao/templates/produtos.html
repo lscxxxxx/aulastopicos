@@ -28,6 +28,8 @@
         {% endfor %}
         </tbody>
       </table>
-      <input type="submit" name="Novo Produto" class="btn btn-success">
+      <form action="{% url 'url_cad_produto' %}" method="GET">
+        <input type="submit" name="Novo Produto" class="btn btn-success">
+      </form>
 </body>
 </html>

@@ -7,5 +7,13 @@
 </head>
 <body>
     <h1>Cadastro de Produtos</h1>
+
+    <form action="{% url 'url_cad_produto' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="nome" placeholder="Digite o nome do produto" class="form-control" required><br>
+        <input type="text" name="preco" placeholder="Digite o preço do produto" class="form-control" required><br>
+        <input type="text" name="qtd" placeholder="Digite a quantidade do produto" class="form-control" required><br>
+        <input type="submit" name="Salvar" class="btn btn-success">
+    </form>
 </body>
 </html>
