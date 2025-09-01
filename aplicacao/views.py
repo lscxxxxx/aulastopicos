@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from .models import Produto
 
 def index(request):
@@ -10,6 +11,7 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+@login_required
 def produto(request):
     produtos = Produto.objects.all()
     context = {
@@ -18,20 +20,23 @@ def produto(request):
     return render(request, 'produtos.html', context)
 
 def cad_produto(request):
-    if request.method == "GET":
-        return render(request, 'cad_produto.html')
-    elif request.method == "POST":
-        nome = request.POST.get('nome')
-        preco = request.POST.get('preco').replace(',', '.')
-        qtd = request.POST.get('qtd')
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            return render(request, 'cad_produto.html')
+        elif request.method == "POST":
+            nome = request.POST.get('nome')
+            preco = request.POST.get('preco').replace(',', '.')
+            qtd = request.POST.get('qtd')
 
-        produto = Produto(
-            nome = nome,
-            preco = preco,
-            qtd = qtd
-        )
-        produto.save()
-        return redirect('url_produto')
+            produto = Produto(
+                nome = nome,
+                preco = preco,
+                qtd = qtd
+            )
+            produto.save()
+            return redirect('url_produto')
+    else:
+        return redirect('url_entrar')
 
 def atualizar_produto(request, id):
     prod = get_object_or_404(Produto, id=id)
