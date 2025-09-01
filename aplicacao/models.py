@@ -11,7 +11,9 @@ class Produto(models.Model):
 class Cliente(models.Model):
     nome = models.CharField("Nome", max_length = 200, unique = True)
     email = models.EmailField("Email", max_length = 200, unique = True)
-    
+     def __str__(self):
+        return self.nome
+
 class Perfil(models.Model):
     cliente = models.OneToOneField(
         "Cliente",
@@ -21,7 +23,7 @@ class Perfil(models.Model):
     endereco = models.CharField("Endereço", max_length = 200)
     telefone = PhoneField("Telefone", blank = True)
     def __str__(self):
-        return self.endereco, self.telefone
+        return f"{self.cliente.nome} - {self.telefone}"
 
 class Venda(models.Model):
     data = models.DateTimeField(auto_now_add = True)
@@ -34,7 +36,7 @@ class Venda(models.Model):
         through = "ItemVenda"
     )
     def __str__(self):
-        return self.data
+        return f"Venda #{self.id} - {self.data.strftime('%d/%m/%Y %H:%M')}"
 
 class ItemVenda(models.Model):
     venda = models.ForeignKey(
@@ -47,4 +49,4 @@ class ItemVenda(models.Model):
     )
     qtd = models.PositiveIntegerField("Quantidade", default = 0)
     def __str__(self):
-        return self.qtd
+        return f"{self.qtd}x {self.produto.nome} (Venda #{self.venda.id})"
