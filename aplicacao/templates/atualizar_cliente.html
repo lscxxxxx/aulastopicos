@@ -1,0 +1,37 @@
+{% load static %}
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static 'aplicacao/cep.js' %}"></script>
+    <title>Atualizar cliente</title>
+    {% bootstrap_css %}
+</head>
+
+<body>
+    {% bootstrap_messages %}
+    <div class="container">
+        <form action="{% url 'url_cad_cliente' %}" method="POST">
+            {% csrf_token %}
+            <!-- Cliente -->
+            <input type="text" name="nome" placeholder="Digite o nome do cliente" class="form-control" required>
+            <input type="email" name="email" placeholder="Digite o e-mail do cliente" class="form-control" required>
+            
+            <!-- Perfil do Cliente -->
+            <input type="text" id="telefone" name="telefone" placeholder="Telefone" class="form-control">
+            <input type="text" id="cep" name="cep" placeholder="CEP" class="form-control" maxlength="8">
+            <input type="text" id="rua" name="rua" placeholder="Rua" class="form-control">
+            <input type="text" id="numero" name="numero" placeholder="Número" class="form-control">
+            <input type="text" id="bairro" name="bairro" placeholder="Bairro" class="form-control">
+            <input type="text" id="cidade" name="cidade" placeholder="Cidade" class="form-control">
+            <input type="text" id="estado" name="estado" placeholder="Estado" class="form-control">
+
+            <input type="submit" value="Salvar" name="btnSalvar" class="btn btn-success">
+        </form>
+    </div>
+</body>
+
+</html>
