@@ -152,4 +152,28 @@ def plot_to_base64(fig):
     fig.savefig(buf, format='png') 
     buf.seek(0) 
     string = base64.b64encode(buf.read())
-    return urllib.parse.quote(string) 
+    return urllib.parse.quote(string)
+
+def usuarios_mais_ativos_view(request):
+
+    context = {}
+
+    return render(request, 'aplicacao/dashboard.html', context)
+
+def evolucao_reviews_view(request):
+
+    context = {}
+
+    return render(request, 'aplicacao/dashboard.html', context) 
+
+def preco_vs_score_view(request):
+
+    context = {}
+
+    return render(request, 'aplicacao/dashboard.html', context) 
+
+def sentimento_reviews_view(request):
+
+    context = {}
+    
+    return render(request, 'aplicacao/dashboard.html', context) 
