@@ -175,5 +175,9 @@ def preco_vs_score_view(request):
 def sentimento_reviews_view(request):
 
     context = {}
-    
-    return render(request, 'aplicacao/dashboard.html', context) 
+
+    return render(request, 'aplicacao/dashboard.html', context)
+
+def dashboard(request):
+
+    return

@@ -11,4 +11,5 @@ urlpatterns = [
     path('cad_user', views.cad_user, name="url_cad_user"),
     path('sair', views.sair, name="url_sair"),
     path('cad_cliente', views.cad_cliente, name="url_cad_cliente"),
+    path('dashboard', views.dashboard, name="url_dashboard"),
 ]
