@@ -4,7 +4,11 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Produto, Cliente, Perfil
+from .models import Produto, Cliente, Perfil, Avaliacao
+import io
+import urllib, base64
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def index(request):
     context = {
@@ -135,3 +139,17 @@ def cad_cliente(request):
             return redirect('url_cliente')
     else:
         return redirect('url_entrar')
+    
+def get_dataframe(): 
+    # Busca todos os dados do banco e retorna um DataFrame do Pandas 
+    avaliacoes = Avaliacao.objects.all().values() 
+    df = pd.DataFrame(list(avaliacoes)) 
+    return df 
+ 
+def plot_to_base64(fig): 
+    # Converte uma figura Matplotlib para uma string base64 para ser usada no HTML 
+    buf = io.BytesIO() 
+    fig.savefig(buf, format='png') 
+    buf.seek(0) 
+    string = base64.b64encode(buf.read())
+    return urllib.parse.quote(string) 
