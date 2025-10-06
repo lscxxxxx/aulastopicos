@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <h2>Top 15 Usuários Mais Ativos</h2>
+    <img src="data:image/png;base64,{{ grafico_usuarios_ativos }}" alt="Gráfico de Usuários Ativos">
+
+    <h2>Evolução de Avaliações por Ano</h2>
+    <img src="data:image/png;base64,{{ grafico_evolucao_reviews }}" alt="Gráfico de Evolução de Reviews">
+
+    <h2>Correlação entre Preço e Nota</h2>
+    <img src="data:image/png;base64,{{ grafico_preco_score }}" alt="Gráfico Preço vs Score">
+
+    <h2>Análise de Sentimentos</h2>
+    <img src="data:image/png;base64,{{ grafico_sentimento }}" alt="Gráfico de Sentimento">
+</body>
+
+</html>

@@ -218,8 +218,43 @@ def preco_vs_score_view(request):
     return render(request, 'aplicacao/dashboard.html', context) 
 
 def sentimento_reviews_view(request):
+    df = get_dataframe()
 
-    context = {}
+    positivo = ["good", "great", "excellent", "I loved", "I recommend"]
+    negativo = ["bad", "terrible", "disappointing", "I didn't like it", "terrible"]
+
+    def classificar_sentimento(texto):
+        texto = texto.lower()
+        for palavra in positivo:
+            if palavra.lower() in texto:
+                return 'Positivo'
+        for palavra in negativo:
+            if palavra.lower() in texto:
+                return 'Negativo'
+        return 'Neutro'
+
+    df['review_summary'] = df['review_summary'].fillna('')
+    df['sentimento'] = df['review_summary'].apply(classificar_sentimento)
+    contagem = df['sentimento'].value_counts()
+
+    cores = {
+        'Positivo': '#4CAF50',
+        'Negativo': '#F44336',
+        'Neutro': '#2196F3'
+    }
+    colors = [cores.get(sent, '#CCCCCC') for sent in contagem.index]
+
+
+    fig = plt.figure(figsize=(10,6))
+    explode = (0.1, 0, 0)
+    plt.pie(contagem, labels=contagem.index, startangle=90, autopct='%1.1f%%', explode=explode)
+    plt.title("Análise de sentimentos simples")
+    plt.axis('equal')
+
+    grafico_base64 = plot_to_base64(fig)
+    context = {
+        'grafico_sentimento': grafico_base64
+    }
 
     return render(request, 'aplicacao/dashboard.html', context)
 
