@@ -155,7 +155,6 @@ def plot_to_base64(fig):
     return urllib.parse.quote(string)
 
 def usuarios_mais_ativos_view(df):
-    #usuarios_filtrados = df[df['profile_name'].notna() & (df['profile_name'].str.lower() != 'unknown')]
     usuarios_filtrados = df.dropna(subset=['profile_name'])
     usuarios_filtrados = usuarios_filtrados[usuarios_filtrados['profile_name'].str.lower() != 'nan']
     avaliacoes_por_usuario = usuarios_filtrados['profile_name'].value_counts().nlargest(15)
@@ -163,7 +162,7 @@ def usuarios_mais_ativos_view(df):
 
     fig = plt.figure(figsize=(10,6))
     plt.barh(avaliacoes_por_usuario.index, avaliacoes_por_usuario.values)
-    plt.title('Top 15 usuários mais ativos')
+    plt.title('Top 15 Usuários Mais Ativos')
     plt.xlabel('Número de avaliações')
     plt.ylabel('Usuário')
     plt.grid(True, linestyle='-', alpha=0.3)
@@ -223,18 +222,10 @@ def sentimento_reviews_view(df):
     df['sentimento'] = df['review_summary'].fillna('').apply(classificar_sentimento)
     contagem = df['sentimento'].value_counts()
 
-    cores = {
-        'Positivo': '#4CAF50',
-        'Negativo': '#F44336',
-        'Neutro': '#2196F3'
-    }
-    colors = [cores.get(sent, '#CCCCCC') for sent in contagem.index]
-
-
     fig = plt.figure(figsize=(10,6))
     explode = (0.1, 0, 0)
     plt.pie(contagem, labels=contagem.index, startangle=90, autopct='%1.1f%%', explode=explode)
-    plt.title("Análise de sentimentos simples")
+    plt.title("Análise Simples de Sentimentos")
     plt.axis('equal')
     plt.tight_layout()
 
@@ -242,10 +233,38 @@ def sentimento_reviews_view(df):
     plt.close(fig)
     return grafico_base64
 
+def distribuicao_das_notas_view(df): 
+    fig = plt.figure(figsize=(10, 6)) 
+    df['review_score'].value_counts().sort_index().plot(kind='bar', color='skyblue') 
+    plt.title('Distribuição das Notas das Avaliações') 
+    plt.xlabel('Nota (Score)') 
+    plt.ylabel('Quantidade de Avaliações') 
+    plt.grid(axis='y', linestyle='--') 
+    plt.tight_layout() 
+
+    grafico_base64 = plot_to_base64(fig)
+    plt.close(fig)
+    return grafico_base64 
+ 
+def livros_mais_avaliados_view(df): 
+    top_10_livros = df['title'].value_counts().nlargest(10) 
+    fig = plt.figure(figsize=(12, 8)) 
+    top_10_livros.sort_values().plot(kind='barh', color='coral') 
+    plt.title('Top 10 Livros com Mais Avaliações') 
+    plt.xlabel('Número de Avaliações') 
+    plt.ylabel('Título do Livro') 
+    plt.tight_layout() 
+
+    grafico_base64 = plot_to_base64(fig)
+    plt.close(fig)
+    return grafico_base64 
+
 def dashboard(request):
     df = get_dataframe()
 
     context = {
+        'grafico_distribuicao_notas': distribuicao_das_notas_view(df.copy()),
+        'grafico_top_livros': livros_mais_avaliados_view(df.copy()),
         'grafico_usuarios_ativos': usuarios_mais_ativos_view(df.copy()),
         'grafico_evolucao_reviews': evolucao_reviews_view(df.copy()),
         'grafico_preco_score': preco_vs_score_view(df.copy()),

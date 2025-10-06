@@ -7,11 +7,71 @@
     <title>Dashboard</title>
 </head>
 
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body,
+    html {
+        width: 100%;
+        height: 100%;
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 10px;
+    }
+
+    main {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    main>div {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+    }
+
+    main h2 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    img {
+        max-width: 100%;
+        max-height: 90%;
+        object-fit: contain;
+    }
+</style>
+
 <body>
     <div>
         <h1>Dashboard</h1>
 
         <main>
+            <div>
+                <h2>Distribuição das Notas das Avaliações</h2>
+                <img src="data:image/png;base64,{{ grafico_distribuicao_notas }}" alt="Gráfico de Notas das Avaliações">
+            </div>
+
+            <div>
+                <h2>Livros Mais Avaliados</h2>
+                <img src="data:image/png;base64,{{ grafico_top_livros }}" alt="Gráfico de Livros Mais Avaliados">
+            </div>
+
             <div>
                 <h2>Top 15 Usuários Mais Ativos</h2>
                 <img src="data:image/png;base64,{{ grafico_usuarios_ativos }}" alt="Gráfico de Usuários Ativos">
