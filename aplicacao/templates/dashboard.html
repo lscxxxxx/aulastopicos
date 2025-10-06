@@ -8,17 +8,31 @@
 </head>
 
 <body>
-    <h2>Top 15 Usuários Mais Ativos</h2>
-    <img src="data:image/png;base64,{{ grafico_usuarios_ativos }}" alt="Gráfico de Usuários Ativos">
+    <div>
+        <h1>Dashboard</h1>
 
-    <h2>Evolução de Avaliações por Ano</h2>
-    <img src="data:image/png;base64,{{ grafico_evolucao_reviews }}" alt="Gráfico de Evolução de Reviews">
+        <main>
+            <div>
+                <h2>Top 15 Usuários Mais Ativos</h2>
+                <img src="data:image/png;base64,{{ grafico_usuarios_ativos }}" alt="Gráfico de Usuários Ativos">
+            </div>
 
-    <h2>Correlação entre Preço e Nota</h2>
-    <img src="data:image/png;base64,{{ grafico_preco_score }}" alt="Gráfico Preço vs Score">
+            <div>
+                <h2>Evolução de Avaliações por Ano</h2>
+                <img src="data:image/png;base64,{{ grafico_evolucao_reviews }}" alt="Gráfico de Evolução de Reviews">
+            </div>
 
-    <h2>Análise de Sentimentos</h2>
-    <img src="data:image/png;base64,{{ grafico_sentimento }}" alt="Gráfico de Sentimento">
+            <div>
+                <h2>Correlação entre Preço e Nota</h2>
+                <img src="data:image/png;base64,{{ grafico_preco_score }}" alt="Gráfico Preço vs Score">
+            </div>
+
+            <div>
+                <h2>Análise de Sentimentos</h2>
+                <img src="data:image/png;base64,{{ grafico_sentimento }}" alt="Gráfico de Sentimento">
+            </div>
+        </main>
+    </div>
 </body>
 
 </html>

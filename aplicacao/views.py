@@ -154,29 +154,26 @@ def plot_to_base64(fig):
     string = base64.b64encode(buf.read())
     return urllib.parse.quote(string)
 
-def usuarios_mais_ativos_view(request):
-    df = get_dataframe()
-
-    usuarios_filtrados = df[df['profile_name'].notna() & (df['profile_name'].str.lower() != 'unknown')]
-    avaliacoes_por_usuario = usuarios_filtrados['profile_name'].value_counts().nlargest(15).sort_values()
+def usuarios_mais_ativos_view(df):
+    #usuarios_filtrados = df[df['profile_name'].notna() & (df['profile_name'].str.lower() != 'unknown')]
+    usuarios_filtrados = df.dropna(subset=['profile_name'])
+    usuarios_filtrados = usuarios_filtrados[usuarios_filtrados['profile_name'].str.lower() != 'nan']
+    avaliacoes_por_usuario = usuarios_filtrados['profile_name'].value_counts().nlargest(15)
+    avaliacoes_por_usuario = avaliacoes_por_usuario.sort_values(ascending=True)
 
     fig = plt.figure(figsize=(10,6))
     plt.barh(avaliacoes_por_usuario.index, avaliacoes_por_usuario.values)
-    plt.title('Usuários mais ativos')
+    plt.title('Top 15 usuários mais ativos')
     plt.xlabel('Número de avaliações')
     plt.ylabel('Usuário')
     plt.grid(True, linestyle='-', alpha=0.3)
-    
+    plt.tight_layout()
+
     grafico_base64 = plot_to_base64(fig)
-    context = {
-        'grafico_usuarios_ativos': grafico_base64
-    }
+    plt.close(fig)
+    return grafico_base64
 
-    return render(request, 'aplicacao/dashboard.html', context)
-
-def evolucao_reviews_view(request):
-    df = get_dataframe()
-
+def evolucao_reviews_view(df):
     df['data_review'] = pd.to_datetime(df['review_time'], unit='s')
     df['ano'] = df['data_review'].dt.year
 
@@ -188,53 +185,42 @@ def evolucao_reviews_view(request):
     plt.xlabel('Ano')
     plt.ylabel('Quantidade de Avaliações')
     plt.grid(True, linestyle='--', alpha=0.3)
+    plt.tight_layout()
 
     grafico_base64 = plot_to_base64(fig)
-    context = {
-        'grafico_evolucao_reviews': grafico_base64
-    }
+    plt.close(fig)
+    return grafico_base64 
 
-    return render(request, 'aplicacao/dashboard.html', context) 
-
-def preco_vs_score_view(request):
-    df = get_dataframe()
-    df = df[df['price'] > 0]
-    df = df[df['price'] < 100]
-    if len(df) > 1000:
-        df = df.sample(n=1000, random_state=42)
+def preco_vs_score_view(df):
+    df_filtrado = df[(df['price'] > 0) & (df['price'] < 100)]
+    if len(df_filtrado) > 1000:
+        df_amostra = df_filtrado.sample(n=1000, random_state=42)
+    else:
+        df_amostra = df_filtrado
 
     fig = plt.figure(figsize=(10,6))
-    plt.scatter(df['price'], df['review_score'], alpha=0.3, color='purple')
+    plt.scatter(df_amostra['price'], df_amostra['review_score'], alpha=0.3, color='purple')
     plt.title('Correlação entre Preço e Nota de Avaliação')
     plt.xlabel('Preço (R$)')
     plt.ylabel('Nota (Score)')
     plt.grid(True, linestyle='--', alpha=0.3)
+    plt.tight_layout()
 
     grafico_base64 = plot_to_base64(fig)
-    context = {
-        'grafico_preco_score': grafico_base64
-    }
+    plt.close(fig)
+    return grafico_base64 
 
-    return render(request, 'aplicacao/dashboard.html', context) 
-
-def sentimento_reviews_view(request):
-    df = get_dataframe()
-
-    positivo = ["good", "great", "excellent", "I loved", "I recommend"]
-    negativo = ["bad", "terrible", "disappointing", "I didn't like it", "terrible"]
+def sentimento_reviews_view(df):
+    positivo = ["good", "great", "excellent", "i loved", "i recommend"]
+    negativo = ["bad", "terrible", "disappointing", "i didn't like it", "terrible"]
 
     def classificar_sentimento(texto):
         texto = texto.lower()
-        for palavra in positivo:
-            if palavra.lower() in texto:
-                return 'Positivo'
-        for palavra in negativo:
-            if palavra.lower() in texto:
-                return 'Negativo'
+        if any(palavra in texto for palavra in positivo): return 'Positivo'
+        if any(palavra in texto for palavra in negativo): return 'Negativo'
         return 'Neutro'
 
-    df['review_summary'] = df['review_summary'].fillna('')
-    df['sentimento'] = df['review_summary'].apply(classificar_sentimento)
+    df['sentimento'] = df['review_summary'].fillna('').apply(classificar_sentimento)
     contagem = df['sentimento'].value_counts()
 
     cores = {
@@ -250,14 +236,20 @@ def sentimento_reviews_view(request):
     plt.pie(contagem, labels=contagem.index, startangle=90, autopct='%1.1f%%', explode=explode)
     plt.title("Análise de sentimentos simples")
     plt.axis('equal')
+    plt.tight_layout()
 
     grafico_base64 = plot_to_base64(fig)
-    context = {
-        'grafico_sentimento': grafico_base64
-    }
-
-    return render(request, 'aplicacao/dashboard.html', context)
+    plt.close(fig)
+    return grafico_base64
 
 def dashboard(request):
+    df = get_dataframe()
 
-    return
+    context = {
+        'grafico_usuarios_ativos': usuarios_mais_ativos_view(df.copy()),
+        'grafico_evolucao_reviews': evolucao_reviews_view(df.copy()),
+        'grafico_preco_score': preco_vs_score_view(df.copy()),
+        'grafico_sentimento': sentimento_reviews_view(df.copy()),
+    }
+
+    return render(request, 'dashboard.html', context)
