@@ -191,14 +191,29 @@ def evolucao_reviews_view(request):
 
     grafico_base64 = plot_to_base64(fig)
     context = {
-        'grafico_usuarios_ativos': grafico_base64
+        'grafico_evolucao_reviews': grafico_base64
     }
 
     return render(request, 'aplicacao/dashboard.html', context) 
 
 def preco_vs_score_view(request):
+    df = get_dataframe()
+    df = df[df['price'] > 0]
+    df = df[df['price'] < 100]
+    if len(df) > 1000:
+        df = df.sample(n=1000, random_state=42)
 
-    context = {}
+    fig = plt.figure(figsize=(10,6))
+    plt.scatter(df['price'], df['review_score'], alpha=0.3, color='purple')
+    plt.title('Correlação entre Preço e Nota de Avaliação')
+    plt.xlabel('Preço (R$)')
+    plt.ylabel('Nota (Score)')
+    plt.grid(True, linestyle='--', alpha=0.3)
+
+    grafico_base64 = plot_to_base64(fig)
+    context = {
+        'grafico_preco_score': grafico_base64
+    }
 
     return render(request, 'aplicacao/dashboard.html', context) 
 
