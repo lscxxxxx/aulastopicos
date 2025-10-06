@@ -157,12 +157,20 @@ def plot_to_base64(fig):
 def usuarios_mais_ativos_view(request):
     df = get_dataframe()
 
-    usuarios_filtrados = df['profile_name'].notna()
-    avaliacoes_por_usuario = usuarios_filtrados['profile_name'].value_counts().nlargest(15)
+    usuarios_filtrados = df[df['profile_name'].notna() & (df['profile_name'].str.lower() != 'unknown')]
+    avaliacoes_por_usuario = usuarios_filtrados['profile_name'].value_counts().nlargest(15).sort_values()
 
+    fig = plt.figure(figsize=(10,6))
     plt.barh(avaliacoes_por_usuario.index, avaliacoes_por_usuario.values)
-
-    context = {}
+    plt.title('Usuários mais ativos')
+    plt.xlabel('Número de avaliações')
+    plt.ylabel('Usuário')
+    plt.grid(True, linestyle='-', alpha=0.3)
+    
+    grafico_base64 = plot_to_base64(fig)
+    context = {
+        'grafico_usuarios_ativos': grafico_base64
+    }
 
     return render(request, 'aplicacao/dashboard.html', context)
 
