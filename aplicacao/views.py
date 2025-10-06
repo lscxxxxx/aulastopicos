@@ -175,8 +175,24 @@ def usuarios_mais_ativos_view(request):
     return render(request, 'aplicacao/dashboard.html', context)
 
 def evolucao_reviews_view(request):
+    df = get_dataframe()
 
-    context = {}
+    df['data_review'] = pd.to_datetime(df['review_time'], unit='s')
+    df['ano'] = df['data_review'].dt.year
+
+    avaliacoes_por_ano = df['ano'].value_counts().sort_index()
+
+    fig = plt.figure(figsize=(10, 6))
+    plt.plot(avaliacoes_por_ano.index, avaliacoes_por_ano.values, marker='o', linestyle='-', color='blue')
+    plt.title('Evolução do Número de Avaliações por Ano')
+    plt.xlabel('Ano')
+    plt.ylabel('Quantidade de Avaliações')
+    plt.grid(True, linestyle='--', alpha=0.3)
+
+    grafico_base64 = plot_to_base64(fig)
+    context = {
+        'grafico_usuarios_ativos': grafico_base64
+    }
 
     return render(request, 'aplicacao/dashboard.html', context) 
 
